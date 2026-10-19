@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "resource_node:block/resource_node_soil",
+    "side": "resource_node:block/resource_node_side",
+    "top": "resource_node:block/resource_node_top"
+  }
+}

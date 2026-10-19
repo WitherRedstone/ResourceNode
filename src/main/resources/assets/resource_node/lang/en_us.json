@@ -1,0 +1,18 @@
+{
+  "itemGroup.resource_node_tab": "Resource Node",
+
+  "block.resource_node.resource_node": "Resource Node",
+
+  "gui.resource_node.speed_interval": "Interval",
+  "gui.resource_node.output_count": "Count",
+  "gui.resource_node.format.seconds": "%ss",
+  "gui.resource_node.format.ticks": "%s tick",
+  "gui.resource_node.format.minutes": "%sm",
+  "gui.resource_node.format.hours": "%sh",
+
+  "tooltip.resource_node.precise_tick": "Precise tick: ",
+  "tooltip.resource_node.speed_range": "Speed ",
+  "tooltip.resource_node.count_range": "Count ",
+  "tooltip.resource_node.enabled": "Enabled",
+  "tooltip.resource_node.disabled": "Disabled"
+}

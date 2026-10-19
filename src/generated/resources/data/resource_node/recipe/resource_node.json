@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "minecraft:beacon"
+    },
+    "B": {
+      "tag": "c:ingots/netherite"
+    },
+    "C": {
+      "tag": "c:nether_stars"
+    }
+  },
+  "pattern": [
+    "BCB",
+    "CAC",
+    "BCB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "resource_node:resource_node"
+  }
+}

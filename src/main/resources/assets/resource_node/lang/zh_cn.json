@@ -1,0 +1,18 @@
+{
+  "itemGroup.resource_node_tab": "资源节点",
+
+  "block.resource_node.resource_node": "资源节点",
+
+  "gui.resource_node.speed_interval": "刷新间隔",
+  "gui.resource_node.output_count": "每次数量",
+  "gui.resource_node.format.seconds": "%s秒",
+  "gui.resource_node.format.ticks": "%s tick",
+  "gui.resource_node.format.minutes": "%s分钟",
+  "gui.resource_node.format.hours": "%s小时",
+
+  "tooltip.resource_node.precise_tick": "精确Tick调整：",
+  "tooltip.resource_node.speed_range": "刷新间隔",
+  "tooltip.resource_node.count_range": "生成物品",
+  "tooltip.resource_node.enabled": "开启",
+  "tooltip.resource_node.disabled": "关闭"
+}
