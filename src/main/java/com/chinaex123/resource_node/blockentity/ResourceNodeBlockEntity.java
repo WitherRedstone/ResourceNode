@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -44,6 +45,9 @@ public class ResourceNodeBlockEntity extends BlockEntity implements MenuProvider
         @Override
         protected void onContentsChanged(int slot) {
             setChanged();
+            if (getLevel() != null && !getLevel().isClientSide) {
+                getLevel().sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+            }
         }
     };
 
@@ -53,6 +57,10 @@ public class ResourceNodeBlockEntity extends BlockEntity implements MenuProvider
 
     public ResourceNodeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
+    }
+
+    public int getTickTimer() {
+        return tickTimer;
     }
 
     public int getSpeedInterval() {
@@ -92,16 +100,23 @@ public class ResourceNodeBlockEntity extends BlockEntity implements MenuProvider
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, ResourceNodeBlockEntity be) {
-        if (level.isClientSide) return;
-
         ItemStack template = be.inventory.getStackInSlot(0);
         if (template.isEmpty()) return;
 
         be.tickTimer++;
+
+        if (level.isClientSide) {
+            if (be.tickTimer >= be.speedInterval) {
+                be.tickTimer = 0;
+            }
+            return;
+        }
+
         if (be.tickTimer >= be.speedInterval) {
             be.tickTimer = 0;
             generateItems(level, pos, template, be.outputCount);
             be.setChanged();
+            level.sendBlockUpdated(pos, state, state, 3);
         }
     }
 
@@ -190,6 +205,22 @@ public class ResourceNodeBlockEntity extends BlockEntity implements MenuProvider
         tag.putInt(NBT_SPEED, speedInterval);
         tag.putInt(NBT_COUNT, outputCount);
         tag.putInt(NBT_TIMER, tickTimer);
+    }
+
+    @Override
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider registries) {
+        CompoundTag tag = new CompoundTag();
+        tag.put(NBT_INVENTORY, inventory.serializeNBT(registries));
+        tag.putInt(NBT_SPEED, speedInterval);
+        tag.putInt(NBT_COUNT, outputCount);
+        tag.putInt(NBT_TIMER, tickTimer);
+        return tag;
+    }
+
+    @Nullable
+    @Override
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
