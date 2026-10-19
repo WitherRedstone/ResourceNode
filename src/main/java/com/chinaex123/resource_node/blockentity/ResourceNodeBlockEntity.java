@@ -25,6 +25,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import com.chinaex123.resource_node.util.ResourceNodeFilter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -151,15 +152,21 @@ public class ResourceNodeBlockEntity extends BlockEntity implements MenuProvider
 
     public void setSpeedInterval(int v) {
         this.speedInterval = Math.clamp(v, RNConfig.MIN_SPEED.get(), RNConfig.MAX_SPEED.get());
-        if (this.tickTimer >= this.speedInterval) {
-            this.tickTimer = 0;
-        }
+        this.tickTimer = 0;
         setChanged();
+        syncToClient();
     }
 
     public void setOutputCount(int v) {
         this.outputCount = Math.clamp(v, RNConfig.MIN_COUNT.get(), RNConfig.MAX_COUNT.get());
         setChanged();
+        syncToClient();
+    }
+
+    private void syncToClient() {
+        if (getLevel() != null && !getLevel().isClientSide) {
+            getLevel().sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+        }
     }
 
     public void adjustSpeed(int delta) {
@@ -180,6 +187,7 @@ public class ResourceNodeBlockEntity extends BlockEntity implements MenuProvider
     public static void tick(Level level, BlockPos pos, BlockState state, ResourceNodeBlockEntity be) {
         ItemStack template = be.inventory.getStackInSlot(0);
         if (template.isEmpty()) return;
+        if (!ResourceNodeFilter.canDuplicate(template)) return;
 
         be.tickTimer++;
 

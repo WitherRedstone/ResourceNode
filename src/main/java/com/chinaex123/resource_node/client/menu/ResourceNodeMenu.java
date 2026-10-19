@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
+import com.chinaex123.resource_node.util.ResourceNodeFilter;
 import org.jetbrains.annotations.NotNull;
 
 public class ResourceNodeMenu extends AbstractContainerMenu {
@@ -62,6 +63,11 @@ public class ResourceNodeMenu extends AbstractContainerMenu {
             @Override
             public int getMaxStackSize() {
                 return 1;
+            }
+
+            @Override
+            public boolean mayPlace(@NotNull ItemStack stack) {
+                return ResourceNodeFilter.canDuplicate(stack);
             }
         });
 
