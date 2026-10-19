@@ -20,6 +20,8 @@ public class RNConfig {
     public static final ModConfigSpec.IntValue MIN_COUNT;
     public static final ModConfigSpec.IntValue MAX_COUNT;
     public static final ModConfigSpec.EnumValue<SpawnMode> SPAWN_MODE;
+    public static final ModConfigSpec.DoubleValue RENDER_ITEM_Y;
+    public static final ModConfigSpec.DoubleValue RENDER_TEXT_Y;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -52,6 +54,15 @@ public class RNConfig {
                         "CENTER  - 在顶面正中心"
                 )
                 .defineEnum("spawnMode", SpawnMode.SCATTER);
+        builder.pop();
+
+        builder.comment("渲染配置").push("Render Config");
+        RENDER_ITEM_Y = builder
+                .comment("物品渲染的 Y 偏移")
+                .defineInRange("renderItemY", 2.0, 1.0, 10.0);
+        RENDER_TEXT_Y = builder
+                .comment("倒计时文字的 Y 偏移")
+                .defineInRange("renderTextY", 1.70, 1.0, 10.0);
         builder.pop();
 
         SPEC = builder.build();
