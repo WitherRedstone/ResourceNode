@@ -34,10 +34,14 @@ public class ResourceNodeMenu extends AbstractContainerMenu {
 
     private final DataSlot speedSlot;
     private final DataSlot countSlot;
+    private final DataSlot energyStoredSlot;
+    private final DataSlot energyCapacitySlot;
 
     // 用于接收服务端同步的数据
     private int clientSpeed = 20;
     private int clientCount = 1;
+    private int clientEnergyStored = 0;
+    private int clientEnergyCapacity = 1;
 
     public ResourceNodeMenu(int containerId, Inventory playerInventory, RegistryFriendlyByteBuf buf) {
         this(containerId, playerInventory,
@@ -106,6 +110,30 @@ public class ResourceNodeMenu extends AbstractContainerMenu {
                 clientCount = pValue;
             }
         });
+
+        this.energyStoredSlot = this.addDataSlot(new DataSlot() {
+            @Override
+            public int get() {
+                return blockEntity != null ? blockEntity.getEnergyStored() : clientEnergyStored;
+            }
+
+            @Override
+            public void set(int pValue) {
+                clientEnergyStored = pValue;
+            }
+        });
+
+        this.energyCapacitySlot = this.addDataSlot(new DataSlot() {
+            @Override
+            public int get() {
+                return blockEntity != null ? RNConfig.ENERGY_CAPACITY.get() : clientEnergyCapacity;
+            }
+
+            @Override
+            public void set(int pValue) {
+                clientEnergyCapacity = pValue;
+            }
+        });
     }
 
     public BlockPos getBlockPos() {
@@ -118,6 +146,14 @@ public class ResourceNodeMenu extends AbstractContainerMenu {
 
     public int getClientCount() {
         return countSlot.get();
+    }
+
+    public int getClientEnergyStored() {
+        return energyStoredSlot.get();
+    }
+
+    public int getClientEnergyCapacity() {
+        return energyCapacitySlot.get();
     }
 
     public void adjustSpeed(int delta) {

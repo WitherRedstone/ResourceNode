@@ -14,5 +14,6 @@
   "tooltip.resource_node.speed_range": "Speed ",
   "tooltip.resource_node.count_range": "Count ",
   "tooltip.resource_node.enabled": "Enabled",
-  "tooltip.resource_node.disabled": "Disabled"
+  "tooltip.resource_node.disabled": "Disabled",
+  "tooltip.resource_node.energy_insufficient": "Insufficient Energy!"
 }

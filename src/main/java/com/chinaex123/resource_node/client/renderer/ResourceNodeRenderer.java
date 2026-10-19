@@ -23,7 +23,6 @@ import org.joml.Matrix4f;
 
 @OnlyIn(Dist.CLIENT)
 public class ResourceNodeRenderer implements BlockEntityRenderer<ResourceNodeBlockEntity> {
-
     public ResourceNodeRenderer(BlockEntityRendererProvider.Context context) {}
 
     @Override
@@ -51,15 +50,23 @@ public class ResourceNodeRenderer implements BlockEntityRenderer<ResourceNodeBlo
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         mc.getItemRenderer().renderStatic(
-                template, ItemDisplayContext.GUI, light,
+                template, ItemDisplayContext.FIXED, light,
                 OverlayTexture.NO_OVERLAY, poseStack, bufferSource,
                 be.getLevel(), 0
         );
         poseStack.popPose();
 
         // 渲染倒计时文字
-        int remaining = Math.max(0, be.getSpeedInterval() - be.getTickTimer());
-        Component text = TimeFormatUtil.formatTicks(remaining);
+        Component text;
+        int textColor;
+        if (RNConfig.ENERGY_ENABLED.get() && be.getEnergyStored() < be.getEnergyCost()) {
+            text = Component.translatable("tooltip.resource_node.energy_insufficient");
+            textColor = 0xFF5555;
+        } else {
+            int remaining = Math.max(0, be.getSpeedInterval() - be.getTickTimer());
+            text = TimeFormatUtil.formatTicks(remaining);
+            textColor = 0xFFFFFF;
+        }
 
         float scale = 0.025f;
         float textWidth = mc.font.width(text) * scale;
@@ -76,7 +83,7 @@ public class ResourceNodeRenderer implements BlockEntityRenderer<ResourceNodeBlo
         poseStack.scale(scale, -scale, scale);
 
         Matrix4f matrix4f = poseStack.last().pose();
-        mc.font.drawInBatch(text, 0, 0, 0xFFFFFF, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, light);
+        mc.font.drawInBatch(text, 0, 0, textColor, true, matrix4f, bufferSource, Font.DisplayMode.NORMAL, 0, light);
 
         poseStack.popPose();
     }

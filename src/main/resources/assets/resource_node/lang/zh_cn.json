@@ -14,5 +14,6 @@
   "tooltip.resource_node.speed_range": "刷新间隔",
   "tooltip.resource_node.count_range": "生成物品",
   "tooltip.resource_node.enabled": "开启",
-  "tooltip.resource_node.disabled": "关闭"
+  "tooltip.resource_node.disabled": "关闭",
+  "tooltip.resource_node.energy_insufficient": "能量不足！"
 }

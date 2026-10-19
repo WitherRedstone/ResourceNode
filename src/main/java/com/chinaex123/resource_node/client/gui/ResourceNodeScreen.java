@@ -22,6 +22,8 @@ import java.awt.*;
 public class ResourceNodeScreen extends AbstractContainerScreen<ResourceNodeMenu> {
 
     private static final ResourceLocation TEXTURE = ResourceNode.id("textures/gui/resource_node.png");
+    private static final ResourceLocation ENERGY_EMPTY = ResourceNode.id("textures/gui/energy_empty.png");
+    private static final ResourceLocation ENERGY_FILLED = ResourceNode.id("textures/gui/energy_filled.png");
 
     private static final int IMAGE_WIDTH = 175;
     private static final int IMAGE_HEIGHT = 165;
@@ -36,6 +38,11 @@ public class ResourceNodeScreen extends AbstractContainerScreen<ResourceNodeMenu
 
     private static final int BUTTON_W = 16;
     private static final int BUTTON_H = 16;
+
+    private static final int ENERGY_BAR_X = 7;
+    private static final int ENERGY_BAR_Y = 11;
+    private static final int ENERGY_BAR_WIDTH = 10;
+    private static final int ENERGY_BAR_HEIGHT = 58;
 
     public ResourceNodeScreen(ResourceNodeMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
@@ -122,12 +129,57 @@ public class ResourceNodeScreen extends AbstractContainerScreen<ResourceNodeMenu
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
         guiGraphics.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
+
+        int energyX = x + ENERGY_BAR_X;
+        int energyY = y + ENERGY_BAR_Y;
+
+        RenderSystem.setShaderTexture(0, ENERGY_EMPTY);
+        guiGraphics.blit(ENERGY_EMPTY, energyX, energyY, 0, 0, ENERGY_BAR_WIDTH, ENERGY_BAR_HEIGHT, ENERGY_BAR_WIDTH, ENERGY_BAR_HEIGHT);
+
+        int energyStored = this.menu.getClientEnergyStored();
+        int energyCapacity = this.menu.getClientEnergyCapacity();
+        if (energyCapacity > 0) {
+            int filledHeight = Math.round((float) energyStored / energyCapacity * ENERGY_BAR_HEIGHT);
+            if (filledHeight > 0) {
+                int filledY = energyY + ENERGY_BAR_HEIGHT - filledHeight;
+                int textureV = ENERGY_BAR_HEIGHT - filledHeight;
+                RenderSystem.setShaderTexture(0, ENERGY_FILLED);
+                guiGraphics.blit(ENERGY_FILLED, energyX, filledY, 0, textureV, ENERGY_BAR_WIDTH, filledHeight, ENERGY_BAR_WIDTH, ENERGY_BAR_HEIGHT);
+            }
+        }
     }
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
+        this.renderEnergyTooltip(guiGraphics, mouseX, mouseY);
+    }
+
+    private void renderEnergyTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        int x = (width - imageWidth) / 2;
+        int y = (height - imageHeight) / 2;
+        int energyX = x + ENERGY_BAR_X;
+        int energyY = y + ENERGY_BAR_Y;
+
+        if (mouseX >= energyX && mouseX < energyX + ENERGY_BAR_WIDTH
+                && mouseY >= energyY && mouseY < energyY + ENERGY_BAR_HEIGHT) {
+            int stored = this.menu.getClientEnergyStored();
+            int capacity = this.menu.getClientEnergyCapacity();
+            guiGraphics.renderTooltip(this.font, Component.literal(formatEnergy(stored) + " / " + formatEnergy(capacity)), mouseX, mouseY);
+        }
+    }
+
+    private String formatEnergy(int energy) {
+        if (energy >= 1_000_000_000) {
+            return String.format("%.1f GFE", energy / 1_000_000_000.0);
+        } else if (energy >= 1_000_000) {
+            return String.format("%.1f MFE", energy / 1_000_000.0);
+        } else if (energy >= 1_000) {
+            return String.format("%.1f kFE", energy / 1_000.0);
+        } else {
+            return energy + " FE";
+        }
     }
 
     @Override

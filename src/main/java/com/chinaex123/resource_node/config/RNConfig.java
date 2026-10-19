@@ -23,6 +23,10 @@ public class RNConfig {
     public static final ModConfigSpec.BooleanValue RENDER_ENABLED;
     public static final ModConfigSpec.DoubleValue RENDER_ITEM_Y;
     public static final ModConfigSpec.DoubleValue RENDER_TEXT_Y;
+    public static final ModConfigSpec.BooleanValue ENERGY_ENABLED;
+    public static final ModConfigSpec.IntValue ENERGY_CAPACITY;
+    public static final ModConfigSpec.IntValue ENERGY_MIN_COST;
+    public static final ModConfigSpec.IntValue ENERGY_MAX_COST;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -55,6 +59,20 @@ public class RNConfig {
                         "CENTER  - 在顶面正中心"
                 )
                 .defineEnum("spawnMode", SpawnMode.SCATTER);
+
+        ENERGY_ENABLED = builder
+                .comment("是否启用 FE 能量消耗。")
+                .define("energyEnabled", true);
+        ENERGY_CAPACITY = builder
+                .comment("FE 能量容量")
+                .defineInRange("energyCapacity", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
+        ENERGY_MIN_COST = builder
+                .comment("最低 FE 消耗（最低速+最少数量时）；消耗按指数增长，最高消耗为 maxCost")
+                .defineInRange("energyMinCost", 50000, 1, Integer.MAX_VALUE);
+        ENERGY_MAX_COST = builder
+                .comment("最高 FE 消耗（最高速+最多数量时）；消耗按指数增长，最低消耗为 minCost")
+                .defineInRange("energyMaxCost", Integer.MAX_VALUE, 1, Integer.MAX_VALUE);
+
         builder.pop();
 
         builder.comment("渲染配置").push("Render Config");
